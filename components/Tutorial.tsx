@@ -3,6 +3,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+interface TutorialProps {
+  onComplete?: () => void
+}
+
 const tutorialSteps = [
   {
     title: 'Welcome to DreamVerse!',
@@ -22,7 +26,7 @@ const tutorialSteps = [
   }
 ]
 
-export default function Tutorial() {
+export default function Tutorial({ onComplete }: TutorialProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [showTutorial, setShowTutorial] = useState(true)
 

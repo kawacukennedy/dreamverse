@@ -27,7 +27,6 @@ interface WorldState {
   setCurrentWorld: (world: World | null) => void
   likeWorld: (id: string) => void
   visitWorld: (id: string) => void
-  getLeaderboard: () => World[]
 }
 
 export const useWorldStore = create<WorldState>()(
@@ -49,10 +48,6 @@ export const useWorldStore = create<WorldState>()(
       visitWorld: (id) => set((state) => ({
         worlds: state.worlds.map(w => w.id === id ? { ...w, visits: w.visits + 1 } : w)
       })),
-      getLeaderboard: () => {
-        const state = get()
-        return [...state.worlds].sort((a, b) => (b.likes + b.visits) - (a.likes + a.visits)).slice(0, 10)
-      },
     }),
     {
       name: 'world-storage',

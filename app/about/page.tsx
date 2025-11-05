@@ -33,7 +33,7 @@ export default function AboutPage() {
 
         <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
         <p>
-          Have questions or feedback? We'd love to hear from you at{' '}
+          Have questions or feedback? We&apos;d love to hear from you at{' '}
           <a href="mailto:hello@dreamverse.app" className="text-primary hover:text-primary-hover">
             hello@dreamverse.app
           </a>

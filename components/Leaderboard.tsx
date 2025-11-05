@@ -1,8 +1,8 @@
 import { useWorldStore } from '../stores/worldStore'
 
 export default function Leaderboard() {
-  const { getLeaderboard } = useWorldStore()
-  const leaderboard = getLeaderboard()
+  const { worlds } = useWorldStore()
+  const leaderboard = [...worlds].sort((a, b) => (b.likes + b.visits) - (a.likes + a.visits)).slice(0, 10)
 
   return (
     <div className="container mx-auto px-4 py-8">

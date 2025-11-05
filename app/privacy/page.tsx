@@ -47,7 +47,7 @@ export default function PrivacyPage() {
           tracking or analytics services.
         </p>
 
-        <h2 className="text-2xl font-semibold mb-4">Children's Privacy</h2>
+        <h2 className="text-2xl font-semibold mb-4">Children&apos;s Privacy</h2>
         <p className="mb-6">
           DreamVerse is designed for teens and young adults. We do not knowingly collect personal information from
           children under 13. If you are under 13, please do not use this service.

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Heart, Eye } from 'lucide-react'
@@ -14,23 +14,19 @@ interface World {
   visits: number
 }
 
+// Mock data for now
+const mockWorlds: World[] = [
+  { id: '1', title: 'Fantasy Castle', owner: 'Alice', thumbnail: '/placeholder.jpg', likes: 42, visits: 120 },
+  { id: '2', title: 'Space Station', owner: 'Bob', thumbnail: '/placeholder.jpg', likes: 28, visits: 95 },
+  { id: '3', title: 'Underwater World', owner: 'Charlie', thumbnail: '/placeholder.jpg', likes: 35, visits: 78 },
+]
+
 export default function ExploreFeed() {
   const [worlds, setWorlds] = useState<World[]>([])
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  // Mock data for now
-  const mockWorlds: World[] = [
-    { id: '1', title: 'Fantasy Castle', owner: 'Alice', thumbnail: '/placeholder.jpg', likes: 42, visits: 120 },
-    { id: '2', title: 'Space Station', owner: 'Bob', thumbnail: '/placeholder.jpg', likes: 28, visits: 95 },
-    { id: '3', title: 'Underwater World', owner: 'Charlie', thumbnail: '/placeholder.jpg', likes: 35, visits: 78 },
-  ]
-
-  useEffect(() => {
-    loadWorlds()
-  }, [])
-
-  const loadWorlds = () => {
+  const loadWorlds = useCallback(() => {
     if (loading || !hasMore) return
 
     setLoading(true)
@@ -40,7 +36,11 @@ export default function ExploreFeed() {
       setLoading(false)
       setHasMore(false) // For demo
     }, 1000)
-  }
+  }, [loading, hasMore])
+
+  useEffect(() => {
+    loadWorlds()
+  }, [loadWorlds])
 
   const SkeletonCard = () => (
     <div className="bg-card-background rounded-lg overflow-hidden shadow-lg animate-pulse">

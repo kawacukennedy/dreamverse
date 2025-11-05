@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, TransformControls, Stars } from '@react-three/drei'
 import { nanoid } from 'nanoid'
+import { Mesh } from 'three'
 import { saveWorld } from '../lib/dbUtils'
 import ObjectPalette from './ObjectPalette'
 import PropertiesPanel from './PropertiesPanel'
@@ -29,36 +30,6 @@ export default function WorldEditor() {
   const [historyIndex, setHistoryIndex] = useState(0)
   const [particles, setParticles] = useState({ enabled: false, count: 100, color: '#ffffff' })
   const meshRefs = useRef<Map<string, Mesh>>(new Map())
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey) {
-        if (event.key === 'z' && !event.shiftKey) {
-          event.preventDefault()
-          undo()
-        } else if ((event.key === 'y') || (event.key === 'z' && event.shiftKey)) {
-          event.preventDefault()
-          redo()
-        } else if (event.key === 's') {
-          event.preventDefault()
-          console.log('Save world')
-        }
-      } else if (event.key === 'Delete' && selectedObject) {
-        event.preventDefault()
-        deleteObject(selectedObject.id)
-      } else if (event.key === 'g') {
-        event.preventDefault()
-        setGizmoMode(prev => {
-          if (prev === 'translate') return 'rotate'
-          if (prev === 'rotate') return 'scale'
-          return 'translate'
-        })
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedObject, undo, redo, deleteObject])
 
   const saveToHistory = useCallback((newObjects: SceneObject[]) => {
     const newHistory = history.slice(0, historyIndex + 1)
@@ -99,6 +70,36 @@ export default function WorldEditor() {
     if (selectedObject?.id === id) setSelectedObject(null)
     saveToHistory(newObjects)
   }, [objects, selectedObject, saveToHistory])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        if (event.key === 'z' && !event.shiftKey) {
+          event.preventDefault()
+          undo()
+        } else if ((event.key === 'y') || (event.key === 'z' && event.shiftKey)) {
+          event.preventDefault()
+          redo()
+        } else if (event.key === 's') {
+          event.preventDefault()
+          console.log('Save world')
+        }
+      } else if (event.key === 'Delete' && selectedObject) {
+        event.preventDefault()
+        deleteObject(selectedObject.id)
+      } else if (event.key === 'g') {
+        event.preventDefault()
+        setGizmoMode(prev => {
+          if (prev === 'translate') return 'rotate'
+          if (prev === 'rotate') return 'scale'
+          return 'translate'
+        })
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedObject, undo, redo, deleteObject])
 
   const exportWorld = () => {
     const worldData = {
