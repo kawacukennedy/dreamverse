@@ -27,14 +27,14 @@ export default function BottomBar({ particles, onUpdateParticles, background, on
 
 
   return (
-    <div className="flex items-center justify-between p-4 bg-card-background border-t border-gray-700">
+    <div className="flex items-center justify-between p-4 bg-gray-800 border-t border-gray-700">
       <div className="flex space-x-4">
         <div>
-          <label className="block text-sm">Background</label>
+          <label className="block text-sm text-white mb-1">Background</label>
           <select
             value={background.type}
             onChange={(e) => handleBackgroundChange(e.target.value)}
-            className="bg-gray-700 p-1 rounded"
+            className="bg-gray-700 text-white p-2 rounded-lg border border-gray-600"
           >
             <option value="gradient">Gradient</option>
             <option value="image">Image</option>
@@ -42,40 +42,44 @@ export default function BottomBar({ particles, onUpdateParticles, background, on
           </select>
         </div>
         <div>
-          <label className="block text-sm">Music</label>
+          <label className="block text-sm text-white mb-1">Music</label>
           <input
             type="file"
             accept="audio/*"
             onChange={handleMusicChange}
-            className="text-sm bg-gray-700 p-1 rounded"
+            className="text-sm bg-gray-700 text-white p-2 rounded-lg border border-gray-600"
           />
         </div>
         <div>
-          <label className="block text-sm">Particles</label>
-          <div className="flex items-center space-x-2">
+          <label className="block text-sm text-white mb-1">Particles</label>
+          <div className="flex items-center space-x-2 mb-2">
             <input
               type="checkbox"
               checked={particles.enabled}
               onChange={(e) => onUpdateParticles({ ...particles, enabled: e.target.checked })}
+              className="rounded"
             />
-            <span>Enabled</span>
+            <span className="text-white">Enabled</span>
           </div>
-          <input
-            type="range"
-            min="10"
-            max="500"
-            value={particles.count}
-            onChange={(e) => onUpdateParticles({ ...particles, count: Number(e.target.value) })}
-            className="w-20"
-            disabled={!particles.enabled}
-          />
-           <input
-             type="color"
-             value={particles.color}
-             onChange={(e) => onUpdateParticles({ ...particles, color: e.target.value })}
-             disabled={!particles.enabled}
-             aria-label="Pick color for particles"
-           />
+          <div className="flex space-x-2">
+            <input
+              type="range"
+              min="10"
+              max="500"
+              value={particles.count}
+              onChange={(e) => onUpdateParticles({ ...particles, count: Number(e.target.value) })}
+              className="w-20"
+              disabled={!particles.enabled}
+            />
+            <input
+              type="color"
+              value={particles.color}
+              onChange={(e) => onUpdateParticles({ ...particles, color: e.target.value })}
+              disabled={!particles.enabled}
+              aria-label="Pick color for particles"
+              className="w-8 h-8 rounded border border-gray-600"
+            />
+          </div>
         </div>
       </div>
     </div>

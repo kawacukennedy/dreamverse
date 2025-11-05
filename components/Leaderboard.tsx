@@ -40,23 +40,23 @@ export default function Leaderboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Leaderboard</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-white">Leaderboard</h1>
       <div className="max-w-md mx-auto">
-        <div className="bg-card-background rounded-lg overflow-hidden">
-          <div className="bg-primary p-4">
-            <h2 className="text-lg font-semibold">Top Creators</h2>
+        <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
+          <div className="bg-purple-600 p-4">
+            <h2 className="text-lg font-semibold text-white">Top Creators</h2>
           </div>
           <div className="divide-y divide-gray-700">
             {leaderboard.map((world, index) => (
               <div
                 key={world.id}
-                className="p-4 flex items-center justify-between"
+                className="p-4 flex items-center justify-between hover:bg-gray-700 transition-colors"
               >
                 <div className="flex items-center">
-                  <span className="font-bold mr-4">{index + 1}</span>
-                  <span>{world.title}</span>
+                  <span className="font-bold mr-4 text-purple-400">{index + 1}</span>
+                  <span className="text-white">{world.title}</span>
                 </div>
-                <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center space-x-4 text-sm text-gray-400">
                   <span>{world.likes || 0} likes</span>
                   <span>{world.visits || 0} visits</span>
                 </div>

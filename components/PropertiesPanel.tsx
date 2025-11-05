@@ -13,8 +13,8 @@ export default function PropertiesPanel({
 }: PropertiesPanelProps) {
   if (!selectedObject) {
     return (
-      <div className="w-64 bg-card-background p-4">
-        <p className="text-text-muted">Select an object to edit properties</p>
+      <div className="w-64 bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700">
+        <p className="text-gray-400">Select an object to edit properties</p>
       </div>
     )
   }
@@ -30,27 +30,27 @@ export default function PropertiesPanel({
   }
 
   return (
-    <div className="w-64 bg-card-background p-4">
-      <h3 className="text-lg font-semibold mb-4">Properties</h3>
+    <div className="w-64 bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700">
+      <h3 className="text-lg font-semibold mb-4 text-white">Properties</h3>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Gizmo Mode</label>
+        <label className="block text-sm font-medium mb-2 text-white">Gizmo Mode</label>
         <div className="flex space-x-2">
           <button
             onClick={() => onSetGizmoMode('translate')}
-            className={`px-2 py-1 rounded ${gizmoMode === 'translate' ? 'bg-primary' : 'bg-gray-700'}`}
+            className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'translate' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
           >
             Move
           </button>
           <button
             onClick={() => onSetGizmoMode('rotate')}
-            className={`px-2 py-1 rounded ${gizmoMode === 'rotate' ? 'bg-primary' : 'bg-gray-700'}`}
+            className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'rotate' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
           >
             Rotate
           </button>
           <button
             onClick={() => onSetGizmoMode('scale')}
-            className={`px-2 py-1 rounded ${gizmoMode === 'scale' ? 'bg-primary' : 'bg-gray-700'}`}
+            className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'scale' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
           >
             Scale
           </button>
@@ -58,39 +58,39 @@ export default function PropertiesPanel({
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Position</label>
+        <label className="block text-sm font-medium mb-2 text-white">Position</label>
         <div className="grid grid-cols-3 gap-2">
           <input
             type="number"
             value={selectedObject.position.x}
             onChange={(e) => updatePosition('x', parseFloat(e.target.value))}
-            className="p-1 bg-gray-700 rounded"
+            className="p-2 bg-gray-700 text-white rounded-lg border border-gray-600"
             placeholder="X"
           />
           <input
             type="number"
             value={selectedObject.position.y}
             onChange={(e) => updatePosition('y', parseFloat(e.target.value))}
-            className="p-1 bg-gray-700 rounded"
+            className="p-2 bg-gray-700 text-white rounded-lg border border-gray-600"
             placeholder="Y"
           />
           <input
             type="number"
             value={selectedObject.position.z}
             onChange={(e) => updatePosition('z', parseFloat(e.target.value))}
-            className="p-1 bg-gray-700 rounded"
+            className="p-2 bg-gray-700 text-white rounded-lg border border-gray-600"
             placeholder="Z"
           />
         </div>
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Color</label>
+        <label className="block text-sm font-medium mb-2 text-white">Color</label>
         <input
           type="color"
           value={selectedObject.color}
           onChange={(e) => updateColor(e.target.value)}
-          className="w-full"
+          className="w-full h-10 rounded-lg border border-gray-600"
         />
       </div>
     </div>

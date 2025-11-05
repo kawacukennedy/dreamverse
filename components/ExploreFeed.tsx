@@ -82,20 +82,20 @@ export default function ExploreFeed() {
             whileTap={{ scale: 0.95 }}
           >
             <Link href={`/world/${world.id}`}>
-              <div className="bg-card-background rounded-lg overflow-hidden shadow-lg">
+              <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-2xl border border-gray-700 hover:shadow-purple-500/20 transition-all duration-300">
                 <div className="h-48 bg-gray-700 flex items-center justify-center">
-                  <span className="text-text-muted">Thumbnail</span>
+                  <span className="text-gray-400">Thumbnail</span>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-2">{world.title}</h3>
-                  <p className="text-text-muted mb-2">by {world.owner}</p>
-                  <div className="flex items-center space-x-4 text-sm text-text-muted">
+                  <h3 className="text-lg font-semibold mb-2 text-white">{world.title}</h3>
+                  <p className="text-gray-400 mb-2">by {world.owner}</p>
+                  <div className="flex items-center space-x-4 text-sm text-gray-400">
                     <div className="flex items-center">
-                      <Heart size={16} className="mr-1" />
+                      <Heart size={16} className="mr-1 text-red-400" />
                       {world.likes}
                     </div>
                     <div className="flex items-center">
-                      <Eye size={16} className="mr-1" />
+                      <Eye size={16} className="mr-1 text-blue-400" />
                       {world.visits}
                     </div>
                   </div>
