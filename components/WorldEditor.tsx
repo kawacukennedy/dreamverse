@@ -6,6 +6,7 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, TransformControls, Stars } from '@react-three/drei'
 import { nanoid } from 'nanoid'
 import { Mesh, Color, TextureLoader, CubeTextureLoader } from 'three'
+import toast from 'react-hot-toast'
 import { saveWorld } from '../lib/dbUtils'
 import ObjectPalette from './ObjectPalette'
 import PropertiesPanel from './PropertiesPanel'
@@ -192,6 +193,7 @@ export default function WorldEditor() {
     linkElement.setAttribute('href', dataUri)
     linkElement.setAttribute('download', exportFileDefaultName)
     linkElement.click()
+    toast.success('World exported successfully!')
   }
 
   const importWorld = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,8 +204,9 @@ export default function WorldEditor() {
         try {
           const worldData = JSON.parse(e.target?.result as string)
           setObjects(worldData.objects || [])
+          toast.success('World imported successfully!')
         } catch (error) {
-          alert('Invalid JSON file')
+          toast.error('Invalid JSON file')
         }
       }
       reader.readAsText(file)
@@ -233,16 +236,17 @@ export default function WorldEditor() {
         text: worldData.description,
         url: shareUrl,
       })
+      toast.success('World shared successfully!')
     } else {
       navigator.clipboard.writeText(shareText)
-      alert('Share link copied to clipboard!')
+      toast.success('Share link copied to clipboard!')
     }
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col min-w-[1024px]">
       <TopBar
-        onSave={() => console.log('Save world')}
+        onSave={() => { console.log('Save world'); toast.success('World saved!') }}
         onExport={exportWorld}
         onImport={importWorld}
         onShare={generateShareLink}
@@ -253,8 +257,8 @@ export default function WorldEditor() {
       />
       <div className="flex flex-1">
         <ObjectPalette onAddObject={addObject} />
-        <div ref={drop as any} className={`flex-1 relative ${isOver ? 'bg-blue-500 bg-opacity-20' : ''}`} aria-label="3D world editor" role="region">
-          <Canvas className="w-full h-full" aria-label="3D world editor canvas">
+        <div ref={drop as any} className={`flex-1 relative ${isOver ? 'bg-blue-500 bg-opacity-20' : ''}`}>
+          <Canvas className="w-full h-full">
             <Suspense fallback={null}>
               <BackgroundSetter background={background} />
             </Suspense>

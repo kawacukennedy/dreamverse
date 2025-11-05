@@ -69,7 +69,7 @@ export default function ExploreFeed() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Explore Worlds</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading && worlds.length === 0
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           : worlds.map((world, index) => (

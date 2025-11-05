@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import toast, { Toaster } from 'react-hot-toast'
 import { useUIStore } from '../stores/uiStore'
 import Header from './Header'
 import Footer from './Footer'
@@ -73,6 +74,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
           <Footer />
           {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
           <ShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
+          <Toaster position="top-right" />
         </div>
       </DndProvider>
     </ErrorBoundary>

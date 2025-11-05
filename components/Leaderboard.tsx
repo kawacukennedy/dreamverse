@@ -41,7 +41,7 @@ export default function Leaderboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center text-white">Leaderboard</h1>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto w-full px-4">
         <div className="bg-gray-800/90 backdrop-blur-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10">
           <div className="bg-purple-600 p-4">
             <h2 className="text-lg font-semibold text-white">Top Creators</h2>

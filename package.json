@@ -27,6 +27,7 @@
     "react-dnd": "^16.0",
     "react-dnd-html5-backend": "^16.0",
     "react-dom": "^18",
+    "react-hot-toast": "^2.6.0",
     "tailwindcss": "^4.0",
     "three": "^0.162",
     "typescript": "^5.6",
