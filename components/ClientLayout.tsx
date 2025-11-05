@@ -4,6 +4,9 @@ import { useState, useEffect, Suspense } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import toast, { Toaster } from 'react-hot-toast'
+import { motion } from 'framer-motion'
+import { Plus } from 'lucide-react'
+import Link from 'next/link'
 import { useUIStore } from '../stores/uiStore'
 import Header from './Header'
 import Footer from './Footer'
@@ -75,6 +78,22 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
           {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
           <ShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
           <Toaster position="top-right" />
+          <motion.div
+            className="fixed bottom-6 right-6 z-40"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 1, type: 'spring' }}
+          >
+            <Link href="/create">
+              <motion.button
+                className="bg-purple-600 hover:bg-purple-500 text-white p-4 rounded-full shadow-2xl border border-white/10"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Plus size={24} />
+              </motion.button>
+            </Link>
+          </motion.div>
         </div>
       </DndProvider>
     </ErrorBoundary>

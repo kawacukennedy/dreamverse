@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Heart, Eye } from 'lucide-react'
 import { getAllWorlds, getUser } from '../lib/dbUtils'
+import LoadingSpinner from './LoadingSpinner'
 
 interface World {
   id: string
@@ -19,6 +20,8 @@ export default function ExploreFeed() {
   const [worlds, setWorlds] = useState<World[]>([])
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [likedWorlds, setLikedWorlds] = useState<Set<string>>(new Set())
 
   const loadWorlds = useCallback(async () => {
     if (loading || !hasMore) return
@@ -66,21 +69,47 @@ export default function ExploreFeed() {
     </div>
   )
 
+  const filteredWorlds = worlds.filter(world =>
+    world.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    world.owner.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const handleLike = (worldId: string) => {
+    setLikedWorlds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(worldId)) {
+        newSet.delete(worldId)
+      } else {
+        newSet.add(worldId)
+      }
+      return newSet
+    })
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Explore Worlds</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-white">Explore Worlds</h1>
+      <div className="max-w-md mx-auto mb-8">
+        <input
+          type="text"
+          placeholder="Search worlds or creators..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 bg-gray-800/90 backdrop-blur-lg text-white rounded-2xl border border-white/10 focus:border-purple-500 focus:outline-none transition-colors"
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading && worlds.length === 0
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-          : worlds.map((world, index) => (
-          <motion.div
-            key={world.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          : filteredWorlds.map((world, index) => (
+            <motion.div
+              key={world.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
             <Link href={`/world/${world.id}`}>
               <div className="bg-gray-800/90 backdrop-blur-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:shadow-purple-500/30 hover:scale-105 transition-all duration-300">
                 <div className="h-48 bg-gray-700 flex items-center justify-center">
@@ -90,10 +119,22 @@ export default function ExploreFeed() {
                   <h3 className="text-lg font-semibold mb-2 text-white">{world.title}</h3>
                   <p className="text-gray-400 mb-2">by {world.owner}</p>
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <div className="flex items-center">
-                      <Heart size={16} className="mr-1 text-red-400" />
-                      {world.likes}
-                    </div>
+                    <motion.button
+                      onClick={(e) => { e.preventDefault(); handleLike(world.id) }}
+                      className="flex items-center hover:text-red-400 transition-colors"
+                      whileTap={{ scale: 1.2 }}
+                    >
+                      <motion.div
+                        animate={{ scale: likedWorlds.has(world.id) ? [1, 1.2, 1] : 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Heart
+                          size={16}
+                          className={`mr-1 ${likedWorlds.has(world.id) ? 'text-red-500 fill-red-500' : 'text-red-400'}`}
+                        />
+                      </motion.div>
+                      {world.likes + (likedWorlds.has(world.id) ? 1 : 0)}
+                    </motion.button>
                     <div className="flex items-center">
                       <Eye size={16} className="mr-1 text-blue-400" />
                       {world.visits}
@@ -105,7 +146,12 @@ export default function ExploreFeed() {
           </motion.div>
         ))}
       </div>
-      {loading && worlds.length > 0 && <p className="text-center mt-8">Loading more...</p>}
+      {loading && worlds.length > 0 && (
+        <div className="text-center mt-8">
+          <LoadingSpinner />
+          <p className="text-gray-400 mt-2">Loading more worlds...</p>
+        </div>
+      )}
       {!loading && hasMore && (
         <button
           onClick={loadWorlds}
