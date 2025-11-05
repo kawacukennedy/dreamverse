@@ -2,14 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { User, LogOut } from 'lucide-react'
+import { User, LogOut, Settings } from 'lucide-react'
 import { useUserStore } from '../stores/userStore'
 import AuthModal from './AuthModal'
+import SettingsModal from './SettingsModal'
 
 export default function Header() {
   const { user, isLoggedIn, logout } = useUserStore()
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   return (
     <>
@@ -36,9 +38,13 @@ export default function Header() {
           <Link href="/leaderboard" className="text-white hover:text-green-400 transition-colors">
             Leaderboard
           </Link>
-          <Link href="/settings" className="text-white hover:text-green-400 transition-colors">
+          <button
+            onClick={() => setShowSettings(true)}
+            className="text-white hover:text-green-400 transition-colors flex items-center"
+          >
+            <Settings size={18} className="mr-1" />
             Settings
-          </Link>
+          </button>
         </nav>
         <div className="flex items-center relative">
           {isLoggedIn ? (
@@ -78,6 +84,7 @@ export default function Header() {
         </div>
       </header>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </>
   )
 }

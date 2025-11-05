@@ -1,9 +1,5 @@
 import { motion } from 'framer-motion'
 
-import { motion } from 'framer-motion'
-
-import { motion } from 'framer-motion'
-
 export default function Home() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center">

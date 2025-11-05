@@ -19,12 +19,15 @@ interface World {
 export default function ExploreFeed() {
   const [worlds, setWorlds] = useState<World[]>([])
   const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMoreData, setHasMoreData] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [likedWorlds, setLikedWorlds] = useState<Set<string>>(new Set())
+  const [sortBy, setSortBy] = useState<'likes' | 'visits' | 'recent'>('recent')
+  const [filterBy, setFilterBy] = useState<'all' | 'liked'>('all')
+  const itemsPerPage = 12
 
   const loadWorlds = useCallback(async () => {
-    if (loading || !hasMore) return
+    if (loading) return
 
     setLoading(true)
     try {
@@ -43,13 +46,13 @@ export default function ExploreFeed() {
         })
       )
       setWorlds(worldsWithOwners)
-      setHasMore(false) // For now, load all
+      setHasMoreData(false)
     } catch (error) {
       console.error('Failed to load worlds', error)
     } finally {
       setLoading(false)
     }
-  }, [loading, hasMore])
+  }, [loading])
 
   useEffect(() => {
     loadWorlds()
@@ -69,10 +72,26 @@ export default function ExploreFeed() {
     </div>
   )
 
-  const filteredWorlds = worlds.filter(world =>
-    world.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    world.owner.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const processedWorlds = worlds
+    .filter(world => {
+      const matchesSearch = world.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        world.owner.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesFilter = filterBy === 'all' || likedWorlds.has(world.id)
+      return matchesSearch && matchesFilter
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'likes':
+          return (b.likes + (likedWorlds.has(b.id) ? 1 : 0)) - (a.likes + (likedWorlds.has(a.id) ? 1 : 0))
+        case 'visits':
+          return b.visits - a.visits
+        case 'recent':
+        default:
+          return 0 // Assume already sorted by creation
+      }
+    })
+
+  const displayedWorlds = processedWorlds
 
   const handleLike = (worldId: string) => {
     setLikedWorlds(prev => {
@@ -89,7 +108,7 @@ export default function ExploreFeed() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center text-white">Explore Worlds</h1>
-      <div className="max-w-md mx-auto mb-8">
+      <div className="max-w-4xl mx-auto mb-8 space-y-4">
         <input
           type="text"
           placeholder="Search worlds or creators..."
@@ -97,11 +116,30 @@ export default function ExploreFeed() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full p-3 bg-gray-800/90 backdrop-blur-lg text-white rounded-2xl border border-white/10 focus:border-purple-500 focus:outline-none transition-colors"
         />
+        <div className="flex flex-wrap gap-4 justify-center">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="bg-gray-800/90 backdrop-blur-lg text-white p-2 rounded-lg border border-white/10"
+          >
+            <option value="recent">Sort by Recent</option>
+            <option value="likes">Sort by Likes</option>
+            <option value="visits">Sort by Visits</option>
+          </select>
+          <select
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value as any)}
+            className="bg-gray-800/90 backdrop-blur-lg text-white p-2 rounded-lg border border-white/10"
+          >
+            <option value="all">All Worlds</option>
+            <option value="liked">Liked Worlds</option>
+          </select>
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading && worlds.length === 0
           ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-          : filteredWorlds.map((world, index) => (
+          : processedWorlds.map((world, index) => (
             <motion.div
               key={world.id}
               initial={{ opacity: 0, y: 20 }}
@@ -151,14 +189,6 @@ export default function ExploreFeed() {
           <LoadingSpinner />
           <p className="text-gray-400 mt-2">Loading more worlds...</p>
         </div>
-      )}
-      {!loading && hasMore && (
-        <button
-          onClick={loadWorlds}
-          className="block mx-auto mt-8 bg-primary px-6 py-3 rounded-lg"
-        >
-          Load More
-        </button>
       )}
     </div>
   )
