@@ -1,11 +1,8 @@
+import { useWorldStore } from '../stores/worldStore'
+
 export default function Leaderboard() {
-  // Mock data
-  const leaderboard = [
-    { rank: 1, username: 'Alice', score: 1500 },
-    { rank: 2, username: 'Bob', score: 1400 },
-    { rank: 3, username: 'Charlie', score: 1300 },
-    { rank: 4, username: 'User123', score: 1200 }, // Current user
-  ]
+  const { getLeaderboard } = useWorldStore()
+  const leaderboard = getLeaderboard()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -16,18 +13,19 @@ export default function Leaderboard() {
             <h2 className="text-lg font-semibold">Top Creators</h2>
           </div>
           <div className="divide-y divide-gray-700">
-            {leaderboard.map((entry) => (
+            {leaderboard.map((world, index) => (
               <div
-                key={entry.rank}
-                className={`p-4 flex items-center justify-between ${
-                  entry.username === 'User123' ? 'bg-primary/20' : ''
-                }`}
+                key={world.id}
+                className="p-4 flex items-center justify-between"
               >
                 <div className="flex items-center">
-                  <span className="font-bold mr-4">{entry.rank}</span>
-                  <span>{entry.username}</span>
+                  <span className="font-bold mr-4">{index + 1}</span>
+                  <span>{world.title}</span>
                 </div>
-                <span className="font-semibold">{entry.score}</span>
+                <div className="flex items-center space-x-4 text-sm">
+                  <span>{world.likes} likes</span>
+                  <span>{world.visits} visits</span>
+                </div>
               </div>
             ))}
           </div>

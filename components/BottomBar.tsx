@@ -1,4 +1,9 @@
-export default function BottomBar() {
+interface BottomBarProps {
+  particles: { enabled: boolean; count: number; color: string }
+  onUpdateParticles: (particles: { enabled: boolean; count: number; color: string }) => void
+}
+
+export default function BottomBar({ particles, onUpdateParticles }: BottomBarProps) {
   const handleBackgroundChange = (bg: string) => {
     console.log('Background changed to', bg)
     // Update world background
@@ -12,10 +17,7 @@ export default function BottomBar() {
     }
   }
 
-  const handleParticlesChange = (density: number) => {
-    console.log('Particles density', density)
-    // Update particles
-  }
+
 
   return (
     <div className="flex items-center justify-between p-4 bg-card-background border-t border-gray-700">
@@ -42,13 +44,28 @@ export default function BottomBar() {
         </div>
         <div>
           <label className="block text-sm">Particles</label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={particles.enabled}
+              onChange={(e) => onUpdateParticles({ ...particles, enabled: e.target.checked })}
+            />
+            <span>Enabled</span>
+          </div>
           <input
             type="range"
-            min="0"
-            max="100"
-            defaultValue="50"
-            onChange={(e) => handleParticlesChange(Number(e.target.value))}
+            min="10"
+            max="500"
+            value={particles.count}
+            onChange={(e) => onUpdateParticles({ ...particles, count: Number(e.target.value) })}
             className="w-20"
+            disabled={!particles.enabled}
+          />
+          <input
+            type="color"
+            value={particles.color}
+            onChange={(e) => onUpdateParticles({ ...particles, color: e.target.value })}
+            disabled={!particles.enabled}
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, memo } from 'react'
 import { Mesh } from 'three'
 
 interface AvatarData {
@@ -21,7 +21,7 @@ interface Avatar3DProps {
   avatarData: AvatarData
 }
 
-export default function Avatar3D({ avatarData }: Avatar3DProps) {
+function Avatar3D({ avatarData }: Avatar3DProps) {
   const meshRef = useRef<Mesh>(null)
 
   return (
@@ -60,3 +60,5 @@ export default function Avatar3D({ avatarData }: Avatar3DProps) {
     </mesh>
   )
 }
+
+export default memo(Avatar3D)

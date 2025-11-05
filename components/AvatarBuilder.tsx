@@ -6,6 +6,7 @@ import { OrbitControls } from '@react-three/drei'
 import Avatar3D from './Avatar3D'
 import LayerSelector from './LayerSelector'
 import ColorPicker from './ColorPicker'
+import { useSound } from '../lib/useSound'
 
 interface AvatarData {
   layers: {
@@ -24,6 +25,7 @@ interface AvatarData {
 }
 
 export default function AvatarBuilder() {
+  const { playSound } = useSound()
   const [avatarData, setAvatarData] = useState<AvatarData>({
     layers: {
       hair: 'default',
@@ -57,8 +59,27 @@ export default function AvatarBuilder() {
   }
 
   const randomize = () => {
-    // Implement randomization logic
-    console.log('Randomize avatar')
+    const randomLayers = {
+      hair: ['short', 'long', 'curly', 'bald'][Math.floor(Math.random() * 4)],
+      eyes: ['round', 'almond', 'wide', 'narrow'][Math.floor(Math.random() * 4)],
+      mouth: ['smile', 'frown', 'neutral', 'open'][Math.floor(Math.random() * 4)],
+      clothes: ['shirt', 'jacket', 'dress', 'hoodie'][Math.floor(Math.random() * 4)],
+      accessories: Math.random() > 0.5 ? ['hat'] : []
+    }
+    const randomColors = {
+      skin: ['#F5D5A8', '#E0AC69', '#C68642', '#8D5524'][Math.floor(Math.random() * 4)],
+      hair: ['#8B4513', '#000000', '#FFD700', '#FF6347'][Math.floor(Math.random() * 4)],
+      eyes: ['#000000', '#8B4513', '#0000FF', '#00FF00'][Math.floor(Math.random() * 4)],
+      clothes: ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'][Math.floor(Math.random() * 5)]
+    }
+    setAvatarData({ layers: randomLayers, colors: randomColors })
+  }
+
+  const generateAI = async () => {
+    // Mock AI generation - just randomize with a delay
+    setTimeout(() => {
+      randomize()
+    }, 1000)
   }
 
   const saveAvatar = () => {
@@ -95,10 +116,13 @@ export default function AvatarBuilder() {
           onChangeColor={(color) => updateColor(selectedLayer, color)}
         />
         <div className="mt-4 space-y-2">
-          <button onClick={randomize} className="w-full bg-secondary text-white py-2 rounded">
+          <button onClick={() => { randomize(); playSound('click') }} className="w-full bg-secondary text-white py-2 rounded">
             Randomize
           </button>
-          <button onClick={saveAvatar} className="w-full bg-primary text-white py-2 rounded">
+          <button onClick={() => { generateAI(); playSound('click') }} className="w-full bg-accent text-white py-2 rounded">
+            AI Generate
+          </button>
+          <button onClick={() => { saveAvatar(); playSound('success') }} className="w-full bg-primary text-white py-2 rounded">
             Save Avatar
           </button>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, TransformControls } from '@react-three/drei'
+import { OrbitControls, TransformControls, Stars } from '@react-three/drei'
 import { nanoid } from 'nanoid'
 import { Mesh } from 'three'
 import ObjectPalette from './ObjectPalette'
@@ -27,6 +27,7 @@ export default function WorldEditor() {
   const [gizmoMode, setGizmoMode] = useState<'translate' | 'rotate' | 'scale'>('translate')
   const [history, setHistory] = useState<SceneObject[][]>([[]])
   const [historyIndex, setHistoryIndex] = useState(0)
+  const [particles, setParticles] = useState({ enabled: false, count: 100, color: '#ffffff' })
   const meshRefs = useRef<Map<string, Mesh>>(new Map())
 
   useEffect(() => {
@@ -183,6 +184,17 @@ export default function WorldEditor() {
                 mode={gizmoMode}
               />
             )}
+            {particles.enabled && (
+              <Stars
+                radius={100}
+                depth={50}
+                count={particles.count}
+                factor={4}
+                saturation={0}
+                fade
+                speed={1}
+              />
+            )}
             <OrbitControls />
           </Canvas>
         </div>
@@ -193,7 +205,7 @@ export default function WorldEditor() {
           onSetGizmoMode={setGizmoMode}
         />
       </div>
-      <BottomBar />
+      <BottomBar particles={particles} onUpdateParticles={setParticles} />
     </div>
   )
 }

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { Heart, Volume2, VolumeX, Share } from 'lucide-react'
+import { useWorldStore } from '../stores/worldStore'
 
 interface WorldViewerProps {
   worldId: string
@@ -12,6 +13,11 @@ interface WorldViewerProps {
 export default function WorldViewer({ worldId }: WorldViewerProps) {
   const [liked, setLiked] = useState(false)
   const [muted, setMuted] = useState(false)
+  const { visitWorld, likeWorld } = useWorldStore()
+
+  useEffect(() => {
+    visitWorld(worldId)
+  }, [worldId, visitWorld])
 
   // Mock world data
   const world = {
@@ -23,6 +29,9 @@ export default function WorldViewer({ worldId }: WorldViewerProps) {
   }
 
   const handleLike = () => {
+    if (!liked) {
+      likeWorld(worldId)
+    }
     setLiked(!liked)
   }
 
