@@ -1,10 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { saveSetting, getSetting } from '../lib/dbUtils'
 
 export default function Settings() {
   const [theme, setTheme] = useState('dark')
   const [aiKey, setAiKey] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const savedTheme = await getSetting('theme')
+      const savedAiKey = await getSetting('aiKey')
+      if (savedTheme) setTheme(savedTheme)
+      if (savedAiKey) setAiKey(savedAiKey)
+      setLoading(false)
+    }
+    loadSettings()
+  }, [])
+
+  const handleThemeChange = async (newTheme: string) => {
+    setTheme(newTheme)
+    await saveSetting('theme', newTheme)
+  }
+
+  const handleAiKeyChange = async (newAiKey: string) => {
+    setAiKey(newAiKey)
+    await saveSetting('aiKey', newAiKey)
+  }
 
   const clearData = () => {
     if (confirm('Are you sure you want to clear all local data?')) {
@@ -22,8 +45,9 @@ export default function Settings() {
           <label className="block text-sm font-medium mb-2">Theme</label>
           <select
             value={theme}
-            onChange={(e) => setTheme(e.target.value)}
+            onChange={(e) => handleThemeChange(e.target.value)}
             className="w-full p-2 bg-card-background rounded"
+            disabled={loading}
           >
             <option value="dark">Dark</option>
             <option value="light">Light</option>
@@ -35,9 +59,10 @@ export default function Settings() {
           <input
             type="password"
             value={aiKey}
-            onChange={(e) => setAiKey(e.target.value)}
+            onChange={(e) => handleAiKeyChange(e.target.value)}
             className="w-full p-2 bg-card-background rounded"
             placeholder="Enter your AI API key"
+            disabled={loading}
           />
         </div>
 
