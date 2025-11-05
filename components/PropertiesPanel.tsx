@@ -13,7 +13,7 @@ export default function PropertiesPanel({
 }: PropertiesPanelProps) {
   if (!selectedObject) {
     return (
-      <div className="w-64 bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700">
+      <div className="w-64 bg-gray-800/90 backdrop-blur-lg p-4 rounded-2xl shadow-2xl border border-white/10">
         <p className="text-gray-400">Select an object to edit properties</p>
       </div>
     )
@@ -30,7 +30,7 @@ export default function PropertiesPanel({
   }
 
   return (
-    <div className="w-64 bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700">
+    <div className="w-64 bg-gray-800/90 backdrop-blur-lg p-4 rounded-2xl shadow-2xl border border-white/10">
       <h3 className="text-lg font-semibold mb-4 text-white">Properties</h3>
 
       <div className="mb-4">
@@ -39,18 +39,21 @@ export default function PropertiesPanel({
           <button
             onClick={() => onSetGizmoMode('translate')}
             className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'translate' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+            title="Move objects (G to cycle)"
           >
             Move
           </button>
           <button
             onClick={() => onSetGizmoMode('rotate')}
             className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'rotate' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+            title="Rotate objects (G to cycle)"
           >
             Rotate
           </button>
           <button
             onClick={() => onSetGizmoMode('scale')}
             className={`px-3 py-2 rounded-lg text-white transition-all duration-300 hover:scale-105 ${gizmoMode === 'scale' ? 'bg-purple-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+            title="Scale objects (G to cycle)"
           >
             Scale
           </button>

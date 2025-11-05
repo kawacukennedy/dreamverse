@@ -82,7 +82,7 @@ export default function ExploreFeed() {
             whileTap={{ scale: 0.95 }}
           >
             <Link href={`/world/${world.id}`}>
-              <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-2xl border border-gray-700 hover:shadow-purple-500/20 transition-all duration-300">
+              <div className="bg-gray-800/90 backdrop-blur-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:shadow-purple-500/30 hover:scale-105 transition-all duration-300">
                 <div className="h-48 bg-gray-700 flex items-center justify-center">
                   <span className="text-gray-400">Thumbnail</span>
                 </div>

@@ -27,7 +27,7 @@ export default function BottomBar({ particles, onUpdateParticles, background, on
 
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-800 border-t border-gray-700">
+    <div className="flex items-center justify-between p-4 bg-gray-800/90 backdrop-blur-lg border-t border-white/10">
       <div className="flex space-x-4">
         <div>
           <label className="block text-sm text-white mb-1">Background</label>

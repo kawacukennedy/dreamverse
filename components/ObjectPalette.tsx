@@ -43,7 +43,7 @@ export default function ObjectPalette({ onAddObject }: ObjectPaletteProps) {
   ]
 
   return (
-    <div className="w-64 bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700">
+    <div className="w-64 bg-gray-800/90 backdrop-blur-lg p-4 rounded-2xl shadow-2xl border border-white/10">
       <h3 className="text-lg font-semibold mb-4 text-white">Object Palette</h3>
       <div className="space-y-2">
         {objectTypes.map((obj) => (

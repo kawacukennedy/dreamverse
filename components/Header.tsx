@@ -13,7 +13,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
+      <header className="flex items-center justify-between p-4 bg-gray-800/90 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-bold text-purple-400 hover:text-purple-300 transition-colors">
             DreamVerse
@@ -53,7 +53,7 @@ export default function Header() {
                 <span className="text-white">{user?.displayName || user?.username}</span>
               </button>
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-2xl border border-gray-700">
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800/95 backdrop-blur-lg rounded-lg shadow-2xl border border-white/10">
                   <button
                     onClick={() => {
                       logout()
