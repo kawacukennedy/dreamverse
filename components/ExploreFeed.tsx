@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Heart, Eye } from 'lucide-react'
+import { getAllWorlds, getUser } from '../lib/dbUtils'
 
 interface World {
   id: string
@@ -14,28 +15,37 @@ interface World {
   visits: number
 }
 
-// Mock data for now
-const mockWorlds: World[] = [
-  { id: '1', title: 'Fantasy Castle', owner: 'Alice', thumbnail: '/placeholder.jpg', likes: 42, visits: 120 },
-  { id: '2', title: 'Space Station', owner: 'Bob', thumbnail: '/placeholder.jpg', likes: 28, visits: 95 },
-  { id: '3', title: 'Underwater World', owner: 'Charlie', thumbnail: '/placeholder.jpg', likes: 35, visits: 78 },
-]
-
 export default function ExploreFeed() {
   const [worlds, setWorlds] = useState<World[]>([])
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
-  const loadWorlds = useCallback(() => {
+  const loadWorlds = useCallback(async () => {
     if (loading || !hasMore) return
 
     setLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setWorlds(prev => [...prev, ...mockWorlds])
+    try {
+      const allWorlds = await getAllWorlds()
+      const worldsWithOwners = await Promise.all(
+        allWorlds.map(async (world: any) => {
+          const user = await getUser(world.ownerId)
+          return {
+            id: world.id,
+            title: world.title,
+            owner: user?.username || 'Anonymous',
+            thumbnail: world.thumbnail || '/placeholder.jpg',
+            likes: world.likes || 0,
+            visits: world.visits || 0,
+          }
+        })
+      )
+      setWorlds(worldsWithOwners)
+      setHasMore(false) // For now, load all
+    } catch (error) {
+      console.error('Failed to load worlds', error)
+    } finally {
       setLoading(false)
-      setHasMore(false) // For demo
-    }, 1000)
+    }
   }, [loading, hasMore])
 
   useEffect(() => {

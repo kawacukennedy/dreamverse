@@ -1,8 +1,40 @@
-import { useWorldStore } from '../stores/worldStore'
+import { useState, useEffect } from 'react'
+import { getAllWorlds, getUser } from '../lib/dbUtils'
+
+interface World {
+  id: string
+  title: string
+  likes: number
+  visits: number
+  ownerId: string
+}
 
 export default function Leaderboard() {
-  const { worlds } = useWorldStore()
-  const leaderboard = [...worlds].sort((a, b) => (b.likes + b.visits) - (a.likes + a.visits)).slice(0, 10)
+  const [leaderboard, setLeaderboard] = useState<any[]>([])
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const worlds = await getAllWorlds()
+        const sorted = worlds
+          .sort((a: any, b: any) => (b.likes + b.visits) - (a.likes + a.visits))
+          .slice(0, 10)
+        const withOwners = await Promise.all(
+          sorted.map(async (world: any) => {
+            const user = await getUser(world.ownerId)
+            return {
+              ...world,
+              owner: user?.username || 'Anonymous'
+            }
+          })
+        )
+        setLeaderboard(withOwners)
+      } catch (error) {
+        console.error('Failed to load leaderboard', error)
+      }
+    }
+    loadLeaderboard()
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -23,8 +55,8 @@ export default function Leaderboard() {
                   <span>{world.title}</span>
                 </div>
                 <div className="flex items-center space-x-4 text-sm">
-                  <span>{world.likes} likes</span>
-                  <span>{world.visits} visits</span>
+                  <span>{world.likes || 0} likes</span>
+                  <span>{world.visits || 0} visits</span>
                 </div>
               </div>
             ))}

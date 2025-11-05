@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import { DndProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 import { useUIStore } from '../stores/uiStore'
 import Header from './Header'
 import Footer from './Footer'
@@ -62,15 +64,17 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <Suspense fallback={<div className="flex-1 flex items-center justify-center">Loading...</div>}>
-          <main className="flex-1">{children}</main>
-        </Suspense>
-        <Footer />
-        {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
-        <ShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
-      </div>
+      <DndProvider backend={HTML5Backend}>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <Suspense fallback={<div className="flex-1 flex items-center justify-center">Loading...</div>}>
+            <main className="flex-1">{children}</main>
+          </Suspense>
+          <Footer />
+          {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
+          <ShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
+        </div>
+      </DndProvider>
     </ErrorBoundary>
   )
 }

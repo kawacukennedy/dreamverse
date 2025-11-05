@@ -1,19 +1,26 @@
 interface BottomBarProps {
   particles: { enabled: boolean; count: number; color: string }
   onUpdateParticles: (particles: { enabled: boolean; count: number; color: string }) => void
+  background: { type: string; value: string }
+  onUpdateBackground: (background: { type: string; value: string }) => void
+  music: string | null
+  onUpdateMusic: (music: string | null) => void
 }
 
-export default function BottomBar({ particles, onUpdateParticles }: BottomBarProps) {
-  const handleBackgroundChange = (bg: string) => {
-    console.log('Background changed to', bg)
-    // Update world background
+export default function BottomBar({ particles, onUpdateParticles, background, onUpdateBackground, music, onUpdateMusic }: BottomBarProps) {
+  const handleBackgroundChange = (type: string) => {
+    let value = background.value
+    if (type === 'gradient') value = '#0B0B0F'
+    else if (type === 'image') value = '' // placeholder
+    else if (type === 'skybox') value = '' // placeholder
+    onUpdateBackground({ type, value })
   }
 
   const handleMusicChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      console.log('Music selected', file.name)
-      // Load and play music
+      const url = URL.createObjectURL(file)
+      onUpdateMusic(url)
     }
   }
 
@@ -25,6 +32,7 @@ export default function BottomBar({ particles, onUpdateParticles }: BottomBarPro
         <div>
           <label className="block text-sm">Background</label>
           <select
+            value={background.type}
             onChange={(e) => handleBackgroundChange(e.target.value)}
             className="bg-gray-700 p-1 rounded"
           >

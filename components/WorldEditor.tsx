@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { useState, useCallback, useRef, useEffect, Suspense } from 'react'
+import { useDrop } from 'react-dnd'
+import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, TransformControls, Stars } from '@react-three/drei'
 import { nanoid } from 'nanoid'
-import { Mesh } from 'three'
+import { Mesh, Color, TextureLoader, CubeTextureLoader } from 'three'
 import { saveWorld } from '../lib/dbUtils'
 import ObjectPalette from './ObjectPalette'
 import PropertiesPanel from './PropertiesPanel'
@@ -33,6 +34,25 @@ interface SceneObject {
   props: object
 }
 
+function BackgroundSetter({ background }: { background: { type: string; value: string } }) {
+  const { scene } = useThree()
+  useEffect(() => {
+    if (background.type === 'gradient') {
+      scene.background = new Color(background.value)
+    } else if (background.type === 'image' && background.value) {
+      const loader = new TextureLoader()
+      loader.load(background.value, (texture) => {
+        scene.background = texture
+      })
+    } else if (background.type === 'skybox' && background.value) {
+      // For skybox, assume value is array of 6 images
+      // Placeholder
+      scene.background = new Color('#87CEEB')
+    }
+  }, [background, scene])
+  return null
+}
+
 /**
  * Main 3D world editor component with object manipulation, undo/redo, and real-time controls
  *
@@ -52,7 +72,31 @@ export default function WorldEditor() {
   const [history, setHistory] = useState<SceneObject[][]>([[]])
   const [historyIndex, setHistoryIndex] = useState(0)
   const [particles, setParticles] = useState({ enabled: false, count: 100, color: '#ffffff' })
+  const [background, setBackground] = useState({ type: 'gradient', value: '#0B0B0F' })
+  const [music, setMusic] = useState<string | null>(null)
   const meshRefs = useRef<Map<string, Mesh>>(new Map())
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'object',
+    drop: (item: { objType: any }) => {
+      const newObject: SceneObject = {
+        id: nanoid(),
+        type: item.objType.type,
+        assetKey: item.objType.assetKey,
+        position: { x: Math.random() * 4 - 2, y: Math.random() * 4 - 2, z: Math.random() * 4 - 2 },
+        rotation: { x: 0, y: 0, z: 0 },
+        scale: { x: 1, y: 1, z: 1 },
+        color: '#ffffff',
+        props: {},
+      }
+      const newObjects = [...objects, newObject]
+      setObjects(newObjects)
+      saveToHistory(newObjects)
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }))
 
   /**
    * Saves the current state of objects to the undo history
@@ -209,8 +253,11 @@ export default function WorldEditor() {
       />
       <div className="flex flex-1">
         <ObjectPalette onAddObject={addObject} />
-        <div className="flex-1 relative">
+        <div ref={drop as any} className={`flex-1 relative ${isOver ? 'bg-blue-500 bg-opacity-20' : ''}`}>
           <Canvas className="w-full h-full">
+            <Suspense fallback={null}>
+              <BackgroundSetter background={background} />
+            </Suspense>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
             {objects.map((obj) => (
@@ -255,6 +302,9 @@ export default function WorldEditor() {
             )}
             <OrbitControls />
           </Canvas>
+          {music && (
+            <audio src={music} controls className="absolute bottom-4 left-4" />
+          )}
         </div>
         <PropertiesPanel
           selectedObject={selectedObject}
@@ -263,7 +313,14 @@ export default function WorldEditor() {
           onSetGizmoMode={setGizmoMode}
         />
       </div>
-      <BottomBar particles={particles} onUpdateParticles={setParticles} />
+      <BottomBar
+        particles={particles}
+        onUpdateParticles={setParticles}
+        background={background}
+        onUpdateBackground={setBackground}
+        music={music}
+        onUpdateMusic={setMusic}
+      />
     </div>
   )
 }
