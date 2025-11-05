@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: 'DreamVerse',
   description: 'A frontend-only immersive social universe for teens to create, explore, and share 3D mini-worlds',
   manifest: '/manifest.json',
+  other: {
+    'google-analytics': 'G-XXXXXXXXXX', // Replace with actual GA ID
+  },
 }
 
 export default function RootLayout({

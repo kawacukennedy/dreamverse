@@ -253,8 +253,8 @@ export default function WorldEditor() {
       />
       <div className="flex flex-1">
         <ObjectPalette onAddObject={addObject} />
-        <div ref={drop as any} className={`flex-1 relative ${isOver ? 'bg-blue-500 bg-opacity-20' : ''}`}>
-          <Canvas className="w-full h-full">
+        <div ref={drop as any} className={`flex-1 relative ${isOver ? 'bg-blue-500 bg-opacity-20' : ''}`} aria-label="3D world editor" role="region">
+          <Canvas className="w-full h-full" aria-label="3D world editor canvas">
             <Suspense fallback={null}>
               <BackgroundSetter background={background} />
             </Suspense>

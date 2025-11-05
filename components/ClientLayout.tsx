@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { DndProvider } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useUIStore } from '../stores/uiStore'
 import Header from './Header'
 import Footer from './Footer'

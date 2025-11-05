@@ -69,12 +69,13 @@ export default function BottomBar({ particles, onUpdateParticles, background, on
             className="w-20"
             disabled={!particles.enabled}
           />
-          <input
-            type="color"
-            value={particles.color}
-            onChange={(e) => onUpdateParticles({ ...particles, color: e.target.value })}
-            disabled={!particles.enabled}
-          />
+           <input
+             type="color"
+             value={particles.color}
+             onChange={(e) => onUpdateParticles({ ...particles, color: e.target.value })}
+             disabled={!particles.enabled}
+             aria-label="Pick color for particles"
+           />
         </div>
       </div>
     </div>
