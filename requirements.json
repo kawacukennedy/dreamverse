@@ -1,0 +1,298 @@
+{
+  "project": {
+    "name": "DreamVerse",
+    "slug": "dreamverse",
+    "description": "A frontend-only immersive social universe for teens to create, explore, and share 3D mini-worlds with customizable avatars. Offline-first, Next.js + TypeScript + Tailwind + Three.js.",
+    "target_audience": "Teens, young adults, creative users",
+    "goals": [
+      "Interactive 3D world editor with drag-and-drop objects",
+      "Customizable avatars with layers and colors",
+      "Offline-first experience with IndexedDB persistence",
+      "Shareable and importable world links",
+      "Fast, responsive, mobile-friendly UI",
+      "Accessible and polished animations",
+      "Microcopy for all UX elements"
+    ]
+  },
+  "tech_stack": {
+    "framework": "Next.js 14 (App Router)",
+    "language": "TypeScript 5.6",
+    "styling": "TailwindCSS 4.0",
+    "3D": "three.js 0.162 with @react-three/fiber 8.13",
+    "state_management": "zustand 4.4",
+    "animations": "framer-motion 8.4",
+    "drag_drop": "react-dnd 18.0",
+    "persistence": "idb 7.1.1",
+    "icons": "lucide-react 0.276"
+  },
+  "architecture": {
+    "frontend_only": true,
+    "offline_first": true,
+    "state_management": {
+      "global": {
+        "user": "User object (avatarData, preferences, settings)",
+        "worlds": "All worlds currently loaded",
+        "explore_feed": "Pagination state for explore page",
+        "ui_state": "Modals, drawers, notifications"
+      },
+      "per_component": {
+        "AvatarBuilder": "Local avatar edits before save",
+        "WorldEditor": "Local world edits with undo/redo stack"
+      }
+    },
+    "persistence": {
+      "db_name": "dreamverse_db_v1",
+      "stores": {
+        "users": { "keyPath": "id", "indexes": ["username", "createdAt"] },
+        "worlds": { "keyPath": "id", "indexes": ["ownerId", "title", "createdAt"] },
+        "assets": { "keyPath": "key", "indexes": ["type"] },
+        "settings": { "keyPath": "key" },
+        "leaderboard": { "keyPath": "weekStart" }
+      }
+    },
+    "shareable_url": {
+      "pattern": "/world/{uuid}",
+      "generation": "nanoid(12), deterministic uniqueness",
+      "import_flow": "User uploads JSON -> validate schema -> save in IndexedDB -> navigate to /world/{id}"
+    }
+  },
+  "ui_design": {
+    "layout": {
+      "header": {
+        "logo": "Top-left, 48x48px, clicking returns home",
+        "nav_links": ["Explore", "Create", "Profile", "Leaderboard", "Settings"],
+        "user_avatar": "Top-right, circular 40px, opens dropdown with Logout and Preferences"
+      },
+      "footer": {
+        "links": ["About", "Privacy Policy", "Contact"],
+        "height": "80px",
+        "background": "#0B0B0F",
+        "text": "#9AA0B0"
+      },
+      "grid": "12-column responsive, 24px gutter",
+      "spacing": [4, 8, 12, 16, 24, 32, 48],
+      "breakpoints": { "sm": 640, "md": 768, "lg": 1024, "xl": 1280 }
+    },
+    "colors": {
+      "primary": "#7B61FF",
+      "primary_hover": "#6A4EF0",
+      "accent": "#00F5A0",
+      "secondary": "#FF7AB6",
+      "background_dark": "#0B0B0F",
+      "text_light": "#FFFFFF",
+      "text_muted": "#9AA0B0",
+      "card_background": "#14141B"
+    },
+    "typography": {
+      "font_family": "Inter, sans-serif",
+      "sizes": { "h1": "36px", "h2": "28px", "h3": "22px", "body": "16px", "small": "14px" },
+      "weights": { "normal": 400, "medium": 500, "bold": 700 }
+    },
+    "animations": {
+      "buttons": "scale 1.05 on hover, scale 0.95 on tap, transition 0.3s ease-in-out",
+      "modals": "fade + slide down 0.5s",
+      "cards": "scale 1.03 on hover, subtle shadow pulse",
+      "object_hover": "glow outline and small scale animation"
+    },
+    "accessibility": {
+      "aria_roles": {
+        "buttons": "role='button', aria-label set dynamically",
+        "canvas": "role='region', aria-label='3D world editor'",
+        "color_picker": "aria-label='Pick color for {target}'"
+      },
+      "keyboard_shortcuts": {
+        "global": [
+          { "keys": "?", "action": "Open shortcuts modal" },
+          { "keys": "Ctrl/Cmd+K", "action": "Quick search/palette" }
+        ],
+        "editor": [
+          { "keys": "Ctrl/Cmd+S", "action": "Save world" },
+          { "keys": "Ctrl/Cmd+Z", "action": "Undo" },
+          { "keys": "Ctrl/Cmd+Shift+Z", "action": "Redo" },
+          { "keys": "Delete", "action": "Delete selected object" },
+          { "keys": "G", "action": "Toggle gizmo (move/rotate/scale)" }
+        ]
+      }
+    }
+  },
+  "components": {
+    "AvatarBuilder": {
+      "layout": {
+        "left_panel": "Layer stack: Hair, Eyes, Mouth, Clothes, Accessories, scrollable",
+        "center": "3D preview canvas 400x400px",
+        "right_panel": "Color pickers for each layer, randomize, undo/redo buttons",
+        "bottom": "Save avatar, export PNG buttons"
+      },
+      "styling": {
+        "panel_bg": "#14141B",
+        "panel_border_radius": "16px",
+        "panel_shadow": "0 8px 30px rgba(10,10,15,0.6)",
+        "buttons": "Primary: #7B61FF bg, hover #6A4EF0, white text, rounded-md"
+      },
+      "features": [
+        "Select layer from stack",
+        "Pick color for layer",
+        "Randomize avatar layers/colors",
+        "Undo/Redo",
+        "Live 3D preview",
+        "Save locally to IndexedDB",
+        "Export as PNG",
+        "Optional AI avatar generation (user-provided key)"
+      ]
+    },
+    "WorldEditor": {
+      "layout": {
+        "left_panel": "Object palette, search, categories",
+        "center": "Three.js interactive canvas, responsive full viewport",
+        "right_panel": "Properties: position, rotation, scale, color, material",
+        "top_bar": "Undo/redo, save, export JSON, import JSON, share link",
+        "bottom_bar": "Particle system, background, music controls"
+      },
+      "styling": {
+        "canvas_bg": "#0B0B0F",
+        "panel_bg": "#14141B",
+        "panel_shadow": "0 8px 30px rgba(10,10,15,0.6)",
+        "buttons": "Primary #7B61FF, accent #00F5A0 for secondary actions, rounded-lg, hover transitions"
+      },
+      "features": [
+        "Drag-and-drop object placement",
+        "Gizmo controls: move, rotate, scale",
+        "Undo/Redo stack",
+        "Background selection (gradient, image, skybox)",
+        "Music selection/upload",
+        "Particle system adjustments (color, density, size)",
+        "Save world locally",
+        "Export/Import JSON",
+        "Generate shareable link",
+        "Performance optimization for large scenes",
+        "Keyboard shortcuts support"
+      ]
+    },
+    "ExploreFeed": {
+      "layout": {
+        "grid": "12-column responsive infinite scroll",
+        "card": {
+          "thumbnail": "Animated or static 200x200px",
+          "title": "Centered below thumbnail",
+          "owner": "Small text below title",
+          "likes_visits": "Icons with numbers",
+          "hover_effect": "Scale 1.03, shadow pulse"
+        }
+      },
+      "features": ["Lazy loading", "Click to visit world", "Filter/search", "Keyboard navigation"]
+    },
+    "WorldViewer": {
+      "layout": {
+        "canvas": "Full viewport Three.js scene",
+        "top_bar": "Like button, mute/unmute music, share link",
+        "interactions": "Orbit camera, zoom, object hover animations"
+      },
+      "styling": {
+        "canvas_bg": "#0B0B0F",
+        "buttons": "Primary #7B61FF, hover #6A4EF0"
+      },
+      "features": [
+        "Orbit controls",
+        "Zoom in/out",
+        "Interactable objects with animations",
+        "Particle effects",
+        "Music playback with volume control",
+        "Responsive on desktop/mobile"
+      ]
+    },
+    "ProfilePage": {
+      "layout": {
+        "top": "Avatar preview, username edit",
+        "middle": "List of worlds owned as grid",
+        "bottom": "Badges, preferences"
+      },
+      "styling": {
+        "card_bg": "#14141B",
+        "avatar_border": "4px solid #7B61FF",
+        "buttons": "Primary #7B61FF, rounded-md"
+      },
+      "features": [
+        "Edit username",
+        "Change avatar",
+        "View created worlds",
+        "Apply preferences (theme, notifications)"
+      ]
+    },
+    "Leaderboard": {
+      "layout": {
+        "table": "Top 10 weekly worlds/users, highlight current user row"
+      },
+      "styling": {
+        "header_bg": "#7B61FF",
+        "row_hover": "scale 1.02, subtle shadow"
+      },
+      "features": ["Local likes/visits tracking", "Weekly reset", "Highlight user row"]
+    },
+    "Settings": {
+      "layout": {
+        "theme_toggle": "Dark/Light mode switch",
+        "ai_keys_input": "Optional AI API key input",
+        "privacy_policy": "View modal with text",
+        "clear_data": "Button to reset all IndexedDB data"
+      },
+      "styling": {
+        "input_bg": "#14141B",
+        "input_text": "#FFFFFF",
+        "buttons": "Primary #7B61FF, hover #6A4EF0"
+      },
+      "features": ["Toggle theme", "Set AI keys", "Reset local data"]
+    },
+    "Tutorial": {
+      "layout": {
+        "modal_overlay": "Full screen semi-transparent",
+        "content_panel": "Step-by-step instructions with icons/images",
+        "nav_buttons": "Next, Back, Skip buttons at bottom"
+      },
+      "styling": {
+        "modal_bg": "#14141B",
+        "text": "#FFFFFF",
+        "buttons": "Primary #7B61FF, hover #6A4EF0, rounded-md"
+      },
+      "features": ["Record completion status locally", "Skip tutorial", "Step transitions with animations"]
+    }
+  },
+  "data_models": {
+    "User": { "id": "string", "username": "string", "displayName": "string", "avatarData": "AvatarData", "preferences": "Preferences", "badges": "array[string]", "worldsOwned": "array[string]", "createdAt": "ISO", "updatedAt": "ISO" },
+    "World": { "id": "string", "ownerId": "string", "title": "string", "description": "string", "thumbnail": "url", "background": "Background", "music": "Music", "objects": "array[SceneObject]", "particles": "ParticlesConfig", "likes": "number", "visits": "number", "createdAt": "ISO", "updatedAt": "ISO", "visibility": "'public'|'private'" },
+    "AvatarData": { "layers": { "hair": "string", "eyes": "string", "mouth": "string", "clothes": "string", "accessories": "array[string]" }, "colors": { "skin": "string", "hair": "string", "eyes": "string", "clothes": "string" } },
+    "SceneObject": { "id": "string", "type": "'static'|'animated'|'interactive'", "assetKey": "string", "position": { "x": "number","y":"number","z":"number" }, "rotation": { "x":"number","y":"number","z":"number" }, "scale": { "x":"number","y":"number","z":"number" }, "color":"string","props":"object" }
+  },
+  "offline_handling": {
+    "all_edits": "Persisted locally in IndexedDB",
+    "explore_feed": "Load cached worlds if offline",
+    "ai_features": "Warn user if offline, require network"
+  },
+  "performance_constraints": {
+    "desktop": { "target_fps": 60, "max_objects": 500 },
+    "mobile": { "target_fps": 45, "max_objects": 150 },
+    "asset_limits": { "thumbnail": "200KB", "music": "5MB", "world_export": "20MB" }
+  },
+  "testing": {
+    "unit_tests": ["AvatarBuilder logic", "WorldEditor undo/redo", "IndexedDB CRUD"],
+    "integration_tests": ["Create->Save->Export->Import->Visit", "Explore feed pagination"],
+    "e2e_tests": ["Onboarding->Create->Visit->Share flow"]
+  },
+  "ci_cd": {
+    "github_actions": { "lint": "eslint --ext .ts,.tsx .", "typecheck": "tsc --noEmit", "unit_tests": "vitest run", "e2e_tests": "playwright test", "build": "next build" },
+    "vercel": "Deploy main branch"
+  },
+  "roadmap": {
+    "week_1": "Scaffold Next.js + Tailwind + TypeScript layout",
+    "week_2": "AvatarBuilder UI + state + IndexedDB",
+    "week_3": "WorldEditor basic canvas + object palette",
+    "week_4": "Gizmo controls, undo/redo, object placement",
+    "week_5": "Background, music, particle panel",
+    "week_6": "ExploreFeed + WorldViewer",
+    "week_7": "Shareable links, JSON import/export",
+    "week_8": "ProfilePage + Leaderboard + Settings",
+    "week_9": "Tutorial + accessibility fixes",
+    "week_10": "Unit, integration, e2e tests",
+    "week_11": "Performance optimization",
+    "week_12": "Finalize docs, README, demo, deploy"
+  }
+}
