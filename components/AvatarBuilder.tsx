@@ -8,7 +8,11 @@ import LayerSelector from './LayerSelector'
 import ColorPicker from './ColorPicker'
 import { useSound } from '../lib/useSound'
 
+/**
+ * Data structure for avatar customization
+ */
 interface AvatarData {
+  /** Layer selections for different avatar parts */
   layers: {
     hair: string
     eyes: string
@@ -16,6 +20,7 @@ interface AvatarData {
     clothes: string
     accessories: string[]
   }
+  /** Color selections for avatar parts */
   colors: {
     skin: string
     hair: string
@@ -24,6 +29,16 @@ interface AvatarData {
   }
 }
 
+/**
+ * Interactive avatar builder component with 3D preview and customization options
+ *
+ * Features:
+ * - Layer-based customization (hair, eyes, mouth, clothes, accessories)
+ * - Color picker for each customizable part
+ * - Live 3D preview with orbit controls
+ * - Randomization and AI generation options
+ * - Local storage persistence
+ */
 export default function AvatarBuilder() {
   const { playSound } = useSound()
   const [avatarData, setAvatarData] = useState<AvatarData>({

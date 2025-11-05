@@ -7,9 +7,8 @@ describe('Header', () => {
 
     expect(screen.getByText('DreamVerse')).toBeInTheDocument()
     expect(screen.getByText('Explore')).toBeInTheDocument()
-    expect(screen.getByText('Create')).toBeInTheDocument()
-    expect(screen.getByText('Profile')).toBeInTheDocument()
     expect(screen.getByText('Leaderboard')).toBeInTheDocument()
     expect(screen.getByText('Settings')).toBeInTheDocument()
+    expect(screen.getByText('Login')).toBeInTheDocument()
   })
 })

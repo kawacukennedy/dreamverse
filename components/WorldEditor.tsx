@@ -11,17 +11,40 @@ import PropertiesPanel from './PropertiesPanel'
 import TopBar from './TopBar'
 import BottomBar from './BottomBar'
 
+/**
+ * Represents a 3D object in the scene
+ */
 interface SceneObject {
+  /** Unique identifier for the object */
   id: string
+  /** Type of object behavior */
   type: 'static' | 'animated' | 'interactive'
+  /** Key identifying the 3D asset/mesh type */
   assetKey: string
+  /** 3D position coordinates */
   position: { x: number; y: number; z: number }
+  /** 3D rotation angles in radians */
   rotation: { x: number; y: number; z: number }
+  /** 3D scale factors */
   scale: { x: number; y: number; z: number }
+  /** Hex color string */
   color: string
+  /** Additional properties for special behaviors */
   props: object
 }
 
+/**
+ * Main 3D world editor component with object manipulation, undo/redo, and real-time controls
+ *
+ * Features:
+ * - Drag-and-drop object placement from palette
+ * - Gizmo controls for translation, rotation, and scaling
+ * - Undo/redo system with history tracking
+ * - Keyboard shortcuts for efficient editing
+ * - Particle systems and background controls
+ * - JSON export/import functionality
+ * - Shareable world links
+ */
 export default function WorldEditor() {
   const [objects, setObjects] = useState<SceneObject[]>([])
   const [selectedObject, setSelectedObject] = useState<SceneObject | null>(null)
@@ -31,6 +54,10 @@ export default function WorldEditor() {
   const [particles, setParticles] = useState({ enabled: false, count: 100, color: '#ffffff' })
   const meshRefs = useRef<Map<string, Mesh>>(new Map())
 
+  /**
+   * Saves the current state of objects to the undo history
+   * @param newObjects - Array of scene objects to save
+   */
   const saveToHistory = useCallback((newObjects: SceneObject[]) => {
     const newHistory = history.slice(0, historyIndex + 1)
     newHistory.push([...newObjects])
@@ -38,6 +65,9 @@ export default function WorldEditor() {
     setHistoryIndex(newHistory.length - 1)
   }, [history, historyIndex])
 
+  /**
+   * Reverts to the previous state in the history
+   */
   const undo = useCallback(() => {
     if (historyIndex > 0) {
       setHistoryIndex(historyIndex - 1)
@@ -45,6 +75,9 @@ export default function WorldEditor() {
     }
   }, [history, historyIndex])
 
+  /**
+   * Advances to the next state in the history
+   */
   const redo = useCallback(() => {
     if (historyIndex < history.length - 1) {
       setHistoryIndex(historyIndex + 1)
