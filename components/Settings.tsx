@@ -2,25 +2,24 @@
 
 import { useState, useEffect } from 'react'
 import { saveSetting, getSetting } from '../lib/dbUtils'
+import { useUIStore } from '../stores/uiStore'
 
 export default function Settings() {
-  const [theme, setTheme] = useState('dark')
+  const { theme, setTheme: setUITheme } = useUIStore()
   const [aiKey, setAiKey] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const loadSettings = async () => {
-      const savedTheme = await getSetting('theme')
       const savedAiKey = await getSetting('aiKey')
-      if (savedTheme) setTheme(savedTheme)
       if (savedAiKey) setAiKey(savedAiKey)
       setLoading(false)
     }
     loadSettings()
   }, [])
 
-  const handleThemeChange = async (newTheme: string) => {
-    setTheme(newTheme)
+  const handleThemeChange = async (newTheme: 'dark' | 'light') => {
+    setUITheme(newTheme)
     await saveSetting('theme', newTheme)
   }
 
@@ -45,7 +44,7 @@ export default function Settings() {
           <label className="block text-sm font-medium mb-2">Theme</label>
           <select
             value={theme}
-            onChange={(e) => handleThemeChange(e.target.value)}
+            onChange={(e) => handleThemeChange(e.target.value as 'dark' | 'light')}
             className="w-full p-2 bg-card-background rounded"
             disabled={loading}
           >

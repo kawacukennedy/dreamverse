@@ -5,17 +5,35 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: '#7B61FF',
-        'primary-hover': '#6A4EF0',
+        primary: {
+          DEFAULT: '#7B61FF',
+          hover: '#6A4EF0',
+          light: '#9B87FF',
+        },
         accent: '#00F5A0',
         secondary: '#FF7AB6',
-        'background-dark': '#0B0B0F',
-        'text-light': '#FFFFFF',
-        'text-muted': '#9AA0B0',
-        'card-background': '#14141B',
+        background: {
+          dark: '#0B0B0F',
+          light: '#FFFFFF',
+        },
+        text: {
+          light: '#FFFFFF',
+          dark: '#000000',
+          muted: {
+            dark: '#9AA0B0',
+            light: '#6B7280',
+          },
+        },
+        card: {
+          background: {
+            dark: '#14141B',
+            light: '#F9FAFB',
+          },
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

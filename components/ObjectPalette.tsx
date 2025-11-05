@@ -11,6 +11,9 @@ export default function ObjectPalette({ onAddObject }: ObjectPaletteProps) {
     { name: 'Cylinder', type: 'static', assetKey: 'cylinder' },
     { name: 'Cone', type: 'static', assetKey: 'cone' },
     { name: 'Torus', type: 'static', assetKey: 'torus' },
+    { name: 'Pyramid', type: 'static', assetKey: 'pyramid' },
+    { name: 'Ring', type: 'static', assetKey: 'ring' },
+    { name: 'Capsule', type: 'static', assetKey: 'capsule' },
   ]
 
   const addObject = (objType: any) => {

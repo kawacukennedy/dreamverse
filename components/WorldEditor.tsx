@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, TransformControls, Stars } from '@react-three/drei'
 import { nanoid } from 'nanoid'
-import { Mesh } from 'three'
+import { saveWorld } from '../lib/dbUtils'
 import ObjectPalette from './ObjectPalette'
 import PropertiesPanel from './PropertiesPanel'
 import TopBar from './TopBar'
@@ -132,12 +132,33 @@ export default function WorldEditor() {
     }
   }
 
-  const generateShareLink = () => {
+  const generateShareLink = async () => {
     const worldId = nanoid(12)
-    // Save world with this id
+    const worldData = {
+      id: worldId,
+      title: 'My DreamVerse World',
+      description: 'Check out this amazing 3D world I created!',
+      objects,
+      createdAt: new Date().toISOString(),
+      author: 'Anonymous', // Could get from user store
+    }
+
+    // Save to IndexedDB
+    await saveWorld(worldData)
+
     const shareUrl = `${window.location.origin}/world/${worldId}`
-    navigator.clipboard.writeText(shareUrl)
-    alert('Share link copied to clipboard!')
+    const shareText = `Check out my DreamVerse world: ${worldData.title}\n${shareUrl}`
+
+    if (navigator.share) {
+      navigator.share({
+        title: worldData.title,
+        text: worldData.description,
+        url: shareUrl,
+      })
+    } else {
+      navigator.clipboard.writeText(shareText)
+      alert('Share link copied to clipboard!')
+    }
   }
 
   return (
@@ -175,6 +196,9 @@ export default function WorldEditor() {
                 {obj.assetKey === 'cylinder' && <cylinderGeometry args={[0.5, 0.5, 1, 32]} />}
                 {obj.assetKey === 'cone' && <coneGeometry args={[0.5, 1, 32]} />}
                 {obj.assetKey === 'torus' && <torusGeometry args={[0.5, 0.2, 16, 32]} />}
+                {obj.assetKey === 'pyramid' && <coneGeometry args={[0.7, 1.2, 4]} />}
+                {obj.assetKey === 'ring' && <torusGeometry args={[0.5, 0.1, 8, 16]} />}
+                {obj.assetKey === 'capsule' && <capsuleGeometry args={[0.5, 1, 4, 8]} />}
                 <meshStandardMaterial color={obj.color} />
               </mesh>
             ))}
